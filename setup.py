@@ -28,9 +28,7 @@ setup(
     url="https://github.com/avinashkarhana/py-https",
     packages=find_packages(exclude="tests"),
     keywords=["https","pyhttps","https.server","pyhttps.server"], 
-    install_requires=[
-        "ssl",
-    ],
+    install_requires=[],
     classifiers=[
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
