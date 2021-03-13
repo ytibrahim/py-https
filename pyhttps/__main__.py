@@ -7,6 +7,7 @@ def main():
             USAGE:
                 pysrvhttps.py [-option value] [port]
             OPTIONS:
+                -h              Help and usage Info
                 -p              Port Number [Port 443,80 requires sudo]
                 -h              Host address
                 -c              ssl cert file location
@@ -18,6 +19,9 @@ def main():
         p=4443
         c=""
         k=""
+        if "-h" in sys.argv:
+            print(usage)
+            exit()
         if len(sys.argv)>1:
             if "-gencert" in sys.argv:
                 generate_selfsigned_cert()

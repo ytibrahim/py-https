@@ -21,6 +21,13 @@ def startServer(host,port,cert,key):
         cert=thisScriptPath+"cert.pem"
     if key=="":
         key=thisScriptPath+"key.pem"
+    if not os.path.exists(cert):
+        print("##################################\nUnable to Start Server!\nCert File Not Found\nSpecify cert file with -c option, or use -h for help")
+        exit()
+    if not os.path.exists(key):
+        print("##################################\nUnable to Start Server!\nKey File Not Found\nSpecify key file with -k option, or use -h for help")
+        exit()
+
 
     server_address = (host, port)
     httpd = http.server.HTTPServer(server_address, http.server.SimpleHTTPRequestHandler)
@@ -34,6 +41,7 @@ if __name__ == '__main__':
         USAGE:
             pysrvhttps.py [-option value] [port]
         OPTIONS:
+            -h              Help and usage Info
             -p              Port Number [Port 443,80 requires sudo]
             -h              Host address
             -c              ssl cert file location
@@ -46,6 +54,9 @@ if __name__ == '__main__':
         p=4443
         c=""
         k=""
+        if "-h" in sys.argv:
+            print(usage)
+            exit()
         if len(sys.argv)>1:
             if "-gencert" in sys.argv:
                 generate_selfsigned_cert()
@@ -81,7 +92,7 @@ if __name__ == '__main__':
         # you can change the host and port
         startServer(h,p,c,k)
     except KeyboardInterrupt:
-        print("\nFile Server Stopped!")
+        print("\nServer Stopped!")
 
 '''
 Command reference for self signed certificate generation: 
