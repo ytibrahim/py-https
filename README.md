@@ -21,7 +21,8 @@
 
 ## OPTIONS:
 
-    -h          Help and usage Info
+    --v         Version Info
+    --help      Help and usage Info
     -p          Port Number [Port 443,80 requires sudo]
     -h          Host address
     -c          ssl cert file location

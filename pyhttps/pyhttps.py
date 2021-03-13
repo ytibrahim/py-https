@@ -1,4 +1,4 @@
-import http.server, ssl, os,sys
+import http.server, ssl, os, sys, codecs
 
 def getScriptPath():
     return os.path.dirname(os.path.abspath(__file__))+'/'
@@ -22,10 +22,10 @@ def startServer(host,port,cert,key):
     if key=="":
         key=thisScriptPath+"key.pem"
     if not os.path.exists(cert):
-        print("##################################\nUnable to Start Server!\nCert File Not Found\nSpecify cert file with -c option, or use -h for help")
+        print("##################################\nUnable to Start Server!\nCert File Not Found\nSpecify cert file with -c option, or use --help for help")
         exit()
     if not os.path.exists(key):
-        print("##################################\nUnable to Start Server!\nKey File Not Found\nSpecify key file with -k option, or use -h for help")
+        print("##################################\nUnable to Start Server!\nKey File Not Found\nSpecify key file with -k option, or use --help for help")
         exit()
 
 
@@ -35,13 +35,27 @@ def startServer(host,port,cert,key):
     print("Server started at https://" + server_address[0]+":"+str(server_address[1]))
     httpd.serve_forever()
 
+
+def read(rel_path):
+    here = os.path.abspath(os.path.dirname(__file__))
+    with codecs.open(os.path.join(here, rel_path), 'r') as fp:
+        return fp.read()
+
+def getVersion():
+    for line in read("./__init__.py").splitlines():
+        if line.startswith('__version__'):
+            delim = '"' if '"' in line else "'"
+            return line.split(delim)[1]
+        raise RuntimeError("Unable to find version string.")
+
 # entry point of script
 if __name__ == '__main__':
     usage="""
         USAGE:
             pysrvhttps.py [-option value] [port]
         OPTIONS:
-            -h              Help and usage Info
+            --v             Version Info
+            --help          Help and usage Info
             -p              Port Number [Port 443,80 requires sudo]
             -h              Host address
             -c              ssl cert file location
@@ -54,8 +68,11 @@ if __name__ == '__main__':
         p=4443
         c=""
         k=""
-        if "-h" in sys.argv:
+        if "--help" in sys.argv:
             print(usage)
+            exit()
+        if "--v" in sys.argv:
+            print("pyhttps version: ",getVersion())
             exit()
         if len(sys.argv)>1:
             if "-gencert" in sys.argv:
@@ -65,26 +82,31 @@ if __name__ == '__main__':
                     p=int(sys.argv[sys.argv.index('-p')+1])
                 except:
                     print("Invalid port!\n",usage)
+                    exit()
             if "-h" in sys.argv:
                 try:
                     h=sys.argv[sys.argv.index('-h')+1]
                 except:
                     print("Invalid host!\n",usage)
+                    exit()
             if "-c" in sys.argv:
                 try:
                     c=sys.argv[sys.argv.index('-c')+1]
                 except:
                     print("Invalid cert!\n",usage)
+                    exit()
             if "-k" in sys.argv:
                 try:
                     k=sys.argv[sys.argv.index('-k')+1]
                 except:
                     print("Invalid key!\n",usage)
+                    exit()
             if len(sys.argv)==2 and sys.argv[1]!="-gencert":
                 try:
                     p=int(sys.argv[1])
                 except:
-                    print("Invalid port!\n",usage)
+                    print("Invalid option or port number!\n",usage)
+                    exit()
             try:
                 p=int(sys.argv[-1])
             except:
